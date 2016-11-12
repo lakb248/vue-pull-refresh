@@ -1,0 +1,10 @@
+# node module #
+node_modules/
+
+# test coveage result #
+coverage/
+
+.DS_Store
+
+# log file #
+*.log
