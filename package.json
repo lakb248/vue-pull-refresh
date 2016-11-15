@@ -4,7 +4,7 @@
   "description": "a vue-pull-refresh implements by vuejs",
   "main": "./dist/vue-pull-refresh.min.js",
   "scripts": {
-    "dev": "webpack-dev-server --watch --progress --config webpack.dev.config.js --port 8888",
+    "dev": "webpack-dev-server --inline --watch --progress --config webpack.dev.config.js --port 8888",
     "build": "webpack --progress --config webpack.prod.config.js",
     "test": "karma start karma.config.js",
     "ci": "npm run test && npm run build"
