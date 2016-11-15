@@ -40,6 +40,7 @@
             this.$nextTick(() => {
                 var el = this.$el;
                 var pullDownHeader = el.querySelector('.pull-down-header');
+                var icon = pullDownHeader.querySelector('.pull-down-content--icon');
 
                 // store of touch position, include start position and distance
                 var touchPosition = {
@@ -61,12 +62,17 @@
                     this.pullDown.height = distance;
                     if (distance > 60) {
                         this.pullDown.status = STATUS_READY;
+                        icon.style.transform = 'rotate(360deg)';
+                    } else {
+                        this.pullDown.status = STATUS_START;
+                        icon.style.transform = 'rotate(' + distance / 60 * 360 + 'deg)';
                     }
                 });
 
                 // bind touchend event
                 el.addEventListener('touchend', e => {
                     pullDownHeader.style.transition = 'height .2s ease';
+                    // icon.style.transition = 'transform .2s ease';
                     if (touchPosition.distance > 60) {
                         this.pullDown.height = 60;
                         this.pullDown.status = STATUS_REFRESH;
@@ -74,7 +80,7 @@
                         if (this.onRefresh && typeof this.onRefresh === 'function') {
                             var res = this.onRefresh();
                             // if onRefresh return promise
-                            if (res.then && typeof res.then === 'function') {
+                            if (res && res.then && typeof res.then === 'function') {
                                 res.then(result => {
                                     resetPullDown(this.pullDown);
                                 }, error => {});
@@ -82,7 +88,9 @@
                                 resetPullDown(this.pullDown);
                             }
                         } else {
-                            resetPullDown(this.pullDown);
+                            setTimeout(() => {
+                                resetPullDown(this.pullDown);
+                            }, 500);
                         }
                     } else {
                         resetPullDown(this.pullDown);
@@ -105,23 +113,30 @@
         height: 0px;
         overflow: hidden;
         position: relative;
-        background-color: #eee;
+        background-color: #2c3133;
     }
     .pull-down-content {
         position: absolute;
         bottom: 10px;
+        left: 50%;
         height: 40px;
-        width: 100%;
+        width: 120px;
+        margin-left: -60px;
+        color: #d5d5d5;
         text-align: center;
         font-family: "noto-thin", "Helvetica Neue", Helvetica, Arial, sans-serif;
         font-size: 14px;
         &--icon {
-            display: inline-block;
+            float: left;
             height: 20px;
             width: 20px;
-            outline: 1px solid black;
+            margin-top: 10px;
+            outline: 1px solid #d5d5d5;
         }
         &--label {
+            float: left;
+            margin-left: 10px;
+            margin-top: 10px;
         }
     }
 </style>
