@@ -2,7 +2,7 @@
     <div class="pull-down-container">
         <div class="pull-down-header" v-bind:style="{'height': pullDown.height + 'px'}">
             <div class="pull-down-content">
-                <i class="pull-down-content--icon"></i>
+                <i class="pull-down-content--icon" v-bind:class="iconClass"></i>
                 <span class="pull-down-content--label">{{label}}</span>
             </div>
         </div>
@@ -34,6 +34,13 @@
         computed: {
             label() {
                 return LABELS[this.pullDown.status + 1];
+            },
+            iconClass() {
+                if (this.pullDown.status === STATUS_REFRESH) {
+                    return 'pull-down-refresh';
+                } else {
+                    return '';
+                }
             }
         },
         mounted() {
@@ -62,10 +69,10 @@
                     this.pullDown.height = distance;
                     if (distance > 60) {
                         this.pullDown.status = STATUS_READY;
-                        icon.style.transform = 'rotate(360deg)';
+                        icon.style.transform = 'rotate(180deg)';
                     } else {
                         this.pullDown.status = STATUS_START;
-                        icon.style.transform = 'rotate(' + distance / 60 * 360 + 'deg)';
+                        icon.style.transform = 'rotate(' + distance / 60 * 180 + 'deg)';
                     }
                 });
 
@@ -90,7 +97,7 @@
                         } else {
                             setTimeout(() => {
                                 resetPullDown(this.pullDown);
-                            }, 500);
+                            }, 5000);
                         }
                     } else {
                         resetPullDown(this.pullDown);
@@ -131,12 +138,27 @@
             height: 20px;
             width: 20px;
             margin-top: 10px;
-            outline: 1px solid #d5d5d5;
+            background: url(./down-arrow.png) no-repeat center center;
+            background-size: 20px 20px;
+            &.pull-down-refresh {
+                background: url(./refresh-icon.png) no-repeat center center;
+                background-size: 20px 20px;
+                animation: rotate 2s infinite;
+                animation-timing-function: linear;
+            }
         }
         &--label {
             float: left;
             margin-left: 10px;
             margin-top: 10px;
+        }
+    }
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
         }
     }
 </style>
