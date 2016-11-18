@@ -1,6 +1,7 @@
 /**
  * @file webpack base config file
  */
+var webpack = require('webpack');
 
 module.exports = {
     module: {
@@ -20,5 +21,13 @@ module.exports = {
         alias: {
             'vue': 'vue/dist/vue.js'
         }
-    }
+    },
+    plugins: [
+        new webpack.LoaderOptionsPlugin({
+            vue: {
+                postcss: [require('postcss-cssnext')({browsers: [
+                    '> 1%', 'last 5 Android versions', 'last 5 iOS versions']})]
+            }
+        })
+    ]
 };
