@@ -1,7 +1,7 @@
 {
   "name": "vue-pull-refresh",
   "version": "0.0.2",
-  "description": "a vue-pull-refresh implements by vuejs",
+  "description": "a pull down refresh component implements by vuejs",
   "main": "./dist/vue-pull-refresh.min.js",
   "scripts": {
     "dev": "webpack-dev-server --inline --watch --progress --config webpack.dev.config.js --port 8888",
@@ -11,8 +11,16 @@
   },
   "keywords": [
     "vue-component",
-    "vuejs"
+    "vuejs",
+    "pull-down"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lakb248/vue-pull-refresh.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lakb248/vue-pull-refresh/issues"
+  },
   "author": "lakb248@gmail.com",
   "license": "ISC",
   "dependencies": {
