@@ -27,17 +27,25 @@
             return {
                 pullDown: {
                     status: 0,
-                    height: 0
+                    height: 0,
+                    msg: ''
                 }
             };
         },
         computed: {
             label() {
-                return LABELS[this.pullDown.status + 1];
+                if (this.pullDown.status === STATUS_ERROR) {
+                    return this.pullDown.msg;
+                } else {
+                    return LABELS[this.pullDown.status + 1];
+                }
+
             },
             iconClass() {
                 if (this.pullDown.status === STATUS_REFRESH) {
                     return 'pull-down-refresh';
+                } else if (this.pullDown.status === STATUS_ERROR) {
+                    return 'pull-down-error';
                 } else {
                     return '';
                 }
@@ -79,25 +87,26 @@
                 // bind touchend event
                 el.addEventListener('touchend', e => {
                     pullDownHeader.style.transition = 'height .2s ease';
+                    // reset icon rotate
+                    icon.style.transform = '';
                     // icon.style.transition = 'transform .2s ease';
                     if (touchPosition.distance > 60) {
                         this.pullDown.height = 60;
                         this.pullDown.status = STATUS_REFRESH;
                         // trigger refresh callback
-                        if (this.onRefresh && typeof this.onRefresh === 'function') {
+                        if (this.onRefresh && tyreturn LABELS[this.pullDown.status + 1];peof this.onRefresh === 'function') {
                             var res = this.onRefresh();
                             // if onRefresh return promise
                             if (res && res.then && typeof res.then === 'function') {
                                 res.then(result => {
                                     resetPullDown(this.pullDown);
-                                }, error => {});
+                                }, error => {
+                                    this.pullDown.msg = error || LABELS[0];
+                                    this.pullDown.status = STATUS_ERROR;
+                                });
                             } else {
                                 resetPullDown(this.pullDown);
                             }
-                        } else {
-                            setTimeout(() => {
-                                resetPullDown(this.pullDown);
-                            }, 5000);
                         }
                     } else {
                         resetPullDown(this.pullDown);
@@ -126,9 +135,8 @@
         position: absolute;
         bottom: 10px;
         left: 50%;
+        transform: translateX(-50%);
         height: 40px;
-        width: 120px;
-        margin-left: -60px;
         color: #d5d5d5;
         text-align: center;
         font-family: "noto-thin", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -146,9 +154,15 @@
                 animation: rotate 2s infinite;
                 animation-timing-function: linear;
             }
+            &.pull-down-error {
+                background: url(./error-icon.png) no-repeat center center;
+                background-size: 20px 20px;
+            }
         }
         &--label {
             float: left;
+            height: 20px;
+            line-height: 20px;
             margin-left: 10px;
             margin-top: 10px;
         }

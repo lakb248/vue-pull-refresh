@@ -8,5 +8,14 @@ new Vue({
     },
     data() {
         return {};
+    },
+    methods: {
+        onRefresh() {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    reject();
+                }, 1000);
+            });
+        }
     }
 });
