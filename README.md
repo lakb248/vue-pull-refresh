@@ -1,2 +1,2 @@
-# vue-component-seed
-A seed for vue component
+# vue-pull-down
+A pull down refresh component implements by vuejs
