@@ -11,18 +11,29 @@
 </template>
 
 <script>
+    // status of pull down
     const STATUS_ERROR = -1;
     const STATUS_START = 0;
     const STATUS_READY = 1;
     const STATUS_REFRESH = 2;
+    // labels of pull down
     const LABELS = ['数据异常', '下拉刷新数据', '松开刷新数据', '数据刷新中...'];
+    const PULL_DOWN_HEIGHT = 60;
+    /**
+     * reset the status of pull down
+     * @param {Object} pullDown the pull down
+     */
     let resetPullDown = pullDown => {
         pullDown.height = 0;
         pullDown.status = STATUS_START;
     };
 
     export default {
-        props: ['onRefresh'],
+        props: {
+            onRefresh: {
+                type: Function
+            }
+        },
         data() {
             return {
                 pullDown: {
@@ -34,6 +45,7 @@
         },
         computed: {
             label() {
+                // label of pull down
                 if (this.pullDown.status === STATUS_ERROR) {
                     return this.pullDown.msg;
                 } else {
@@ -42,6 +54,7 @@
 
             },
             iconClass() {
+                // icon of pull down
                 if (this.pullDown.status === STATUS_REFRESH) {
                     return 'pull-down-refresh';
                 } else if (this.pullDown.status === STATUS_ERROR) {
@@ -68,19 +81,32 @@
                     touchPosition.start = e.touches.item(0).pageY;
                 });
 
-                // bind touchmove event, do the following things:
-                //
+                /**
+                 * bind touchmove event, do the following:
+                 * first, update the height of pull down
+                 * finally, update the status of pull down based on the distance
+                 */
                 el.addEventListener('touchmove', e => {
                     var distance = e.touches.item(0).pageY - touchPosition.start;
+                    // limit the height of pull down to 180
                     distance = distance > 180 ? 180: distance;
+                    // update touchPosition and the height of pull down
                     touchPosition.distance = distance;
                     this.pullDown.height = distance;
-                    if (distance > 60) {
+                    /**
+                     * if distance is bigger than the height of pull down
+                     * set the status of pull down to STATUS_READY
+                     */
+                    if (distance > PULL_DOWN_HEIGHT) {
                         this.pullDown.status = STATUS_READY;
                         icon.style.transform = 'rotate(180deg)';
                     } else {
+                        /**
+                         * else set the status of pull down to STATUS_START
+                         * and rotate the icon based on distance
+                         */
                         this.pullDown.status = STATUS_START;
-                        icon.style.transform = 'rotate(' + distance / 60 * 180 + 'deg)';
+                        icon.style.transform = 'rotate(' + distance / PULL_DOWN_HEIGHT * 180 + 'deg)';
                     }
                 });
 
@@ -89,20 +115,24 @@
                     pullDownHeader.style.transition = 'height .2s ease';
                     // reset icon rotate
                     icon.style.transform = '';
-                    // icon.style.transition = 'transform .2s ease';
-                    if (touchPosition.distance > 60) {
-                        this.pullDown.height = 60;
+                    // if distance is bigger than 60
+                    if (touchPosition.distance > PULL_DOWN_HEIGHT) {
+                        this.pullDown.height = PULL_DOWN_HEIGHT;
                         this.pullDown.status = STATUS_REFRESH;
                         // trigger refresh callback
-                        if (this.onRefresh && tyreturn LABELS[this.pullDown.status + 1];peof this.onRefresh === 'function') {
+                        if (this.onRefresh && typeof this.onRefresh === 'function') {
                             var res = this.onRefresh();
                             // if onRefresh return promise
                             if (res && res.then && typeof res.then === 'function') {
                                 res.then(result => {
                                     resetPullDown(this.pullDown);
                                 }, error => {
+                                    // show error and hide the pull down after 1 second
                                     this.pullDown.msg = error || LABELS[0];
                                     this.pullDown.status = STATUS_ERROR;
+                                    setTimeout(() => {
+                                        resetPullDown(this.pullDown);
+                                    }, 1000);
                                 });
                             } else {
                                 resetPullDown(this.pullDown);
@@ -111,11 +141,15 @@
                     } else {
                         resetPullDown(this.pullDown);
                     }
+                    // reset touchPosition
                     touchPosition.distance = 0;
                     touchPosition.start = 0;
                 });
                 // remove transition when transitionend
                 pullDownHeader.addEventListener('transitionend', () => {
+                    pullDownHeader.style.transition = '';
+                });
+                pullDownHeader.addEventListener('webkitTransitionEnd', () => {
                     pullDownHeader.style.transition = '';
                 });
             });

@@ -13,7 +13,7 @@ new Vue({
         onRefresh() {
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
-                    reject();
+                    Math.random() < 0.5 ? resolve() : reject();
                 }, 1000);
             });
         }
