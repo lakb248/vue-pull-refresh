@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "webpack-dev-server --inline --watch --progress --config webpack.dev.config.js --port 8888",
     "build": "webpack --progress --config webpack.prod.config.js",
-    "test": "karma start karma.config.js",
-    "ci": "npm run test && npm run build"
+    "ci": "npm run build"
   },
   "keywords": [
     "vue-component",
@@ -18,7 +17,7 @@
     "type": "git",
     "url": "https://github.com/lakb248/vue-pull-refresh.git"
   },
-  "bugs": {
+  "bugs": {np
     "url": "https://github.com/lakb248/vue-pull-refresh/issues"
   },
   "author": "lakb248@gmail.com",
