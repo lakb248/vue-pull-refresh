@@ -6,6 +6,7 @@
 ## Demo
 
 [Demo](https://lakb248.github.io/vue-pull-refresh)
+
 PS: Please use browsers that support Promise
 
 ## Usage
