@@ -26,6 +26,24 @@
                 <div class="content"></div>
             </vue-pull-refresh>
         </div>
-        <script type="text/javascript" src="/build/build.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/vue/2.0.6/vue.min.js"></script>
+        <script type="text/javascript" src="./dist/vue-pull-refresh.min.js"></script>
+        <script type="text/javascript">
+            new Vue({
+                el: '#container',
+                components: {
+                    'vue-pull-refresh': VuePullRefresh
+                },
+                methods: {
+                    onRefresh: function () {
+                        return new Promise(function (resolve, reject) {
+                            setTimeout(function () {
+                                resolve();
+                            }, 1000);
+                        });
+                    }
+                }
+            });
+        </script>
     </body>
 </html>
