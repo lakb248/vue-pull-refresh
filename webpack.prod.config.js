@@ -7,7 +7,7 @@ var config = require('./webpack.base.config');
 config.entry = './src/index.js';
 config.output = {
     filename: './dist/vue-pull-refresh.min.js',
-    library: 'vuePullRefresh',
+    library: 'VuePullRefresh',
     libraryTarget: 'umd'
 };
 
