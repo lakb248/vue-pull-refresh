@@ -137,6 +137,9 @@
                             } else {
                                 resetPullDown(this.pullDown);
                             }
+                        } else {
+                            resetPullDown(this.pullDown);
+                            console.warn('please use :on-refresh to pass onRefresh callback');
                         }
                     } else {
                         resetPullDown(this.pullDown);
