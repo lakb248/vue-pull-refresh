@@ -32,6 +32,12 @@
         props: {
             onRefresh: {
                 type: Function
+            },
+            config: {
+                type: Object,
+                default: function() {
+                    return {};
+                }
             }
         },
         data() {
@@ -48,10 +54,15 @@
                 // label of pull down
                 if (this.pullDown.status === STATUS_ERROR) {
                     return this.pullDown.msg;
-                } else {
-                    return LABELS[this.pullDown.status + 1];
                 }
-
+                return this.customLabels[this.pullDown.status + 1];
+            },
+            customLabels() {
+                let errorLabel = this.config.errorLabel || LABELS[0];
+                let startLabel = this.config.startLabel || LABELS[1];
+                let readyLaebl = this.config.readyLabel || LABELS[2];
+                let loadingLabel = this.config.loadingLabel || LABELS[3];
+                return [errorLabel, startLabel, readyLaebl, loadingLabel];
             },
             iconClass() {
                 // icon of pull down
@@ -59,9 +70,8 @@
                     return 'pull-down-refresh';
                 } else if (this.pullDown.status === STATUS_ERROR) {
                     return 'pull-down-error';
-                } else {
-                    return '';
                 }
+                return '';
             }
         },
         mounted() {
@@ -89,7 +99,7 @@
                 el.addEventListener('touchmove', e => {
                     var distance = e.touches.item(0).pageY - touchPosition.start;
                     // limit the height of pull down to 180
-                    distance = distance > 180 ? 180: distance;
+                    distance = distance > 180 ? 180 : distance;
                     // update touchPosition and the height of pull down
                     touchPosition.distance = distance;
                     this.pullDown.height = distance;
@@ -128,7 +138,7 @@
                                     resetPullDown(this.pullDown);
                                 }, error => {
                                     // show error and hide the pull down after 1 second
-                                    this.pullDown.msg = error || LABELS[0];
+                                    this.pullDown.msg = error || this.customLabels[0];
                                     this.pullDown.status = STATUS_ERROR;
                                     setTimeout(() => {
                                         resetPullDown(this.pullDown);
@@ -170,12 +180,14 @@
     }
     .pull-down-content {
         position: absolute;
+        max-width: 90%;
         bottom: 10px;
         left: 50%;
         transform: translateX(-50%);
         height: 40px;
         color: #d5d5d5;
         text-align: center;
+        border-left: 20px solid transparent;
         font-family: "noto-thin", "Helvetica Neue", Helvetica, Arial, sans-serif;
         font-size: 14px;
         &--icon {
@@ -183,6 +195,7 @@
             height: 20px;
             width: 20px;
             margin-top: 10px;
+            margin-left: -20px;
             background: url(./down-arrow.png) no-repeat center center;
             background-size: 20px 20px;
             &.pull-down-refresh {
