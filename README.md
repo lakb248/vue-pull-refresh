@@ -1,7 +1,7 @@
 # vue-pull-refresh
 [![Build Status](https://travis-ci.org/lakb248/vue-pull-refresh.svg?branch=master)](https://travis-ci.org/lakb248/vue-pull-refresh)
 
-> A pull down refresh component implements by vuejs 2.0
+> A pull down refresh component implements by vuejs 2.0 for mobile.
 
 ## Demo
 
@@ -71,6 +71,16 @@ new Vue({
 |:--|:--|
 | onRefresh | refresh event;Should return a promise. |
 | config | {<br>errorLabel: label shows when error<br>startLabel: label shows when pull down start<br>readyLabel: label shows when ready to refresh<br>loadingLabel: label shows when loading<br>} |
+
+## Contribution
+First, install dependencies
+```
+npm install
+```
+Second, setup development environment
+```
+npm run dev
+```
 
 ## License
 
