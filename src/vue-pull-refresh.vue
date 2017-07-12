@@ -19,14 +19,7 @@
     // labels of pull down
     const LABELS = ['数据异常', '下拉刷新数据', '松开刷新数据', '数据刷新中...'];
     const PULL_DOWN_HEIGHT = 60;
-    /**
-     * reset the status of pull down
-     * @param {Object} pullDown the pull down
-     */
-    let resetPullDown = pullDown => {
-        pullDown.height = 0;
-        pullDown.status = STATUS_START;
-    };
+    const ANIMATION = 'height .2s ease';
 
     export default {
         props: {
@@ -79,7 +72,17 @@
                 var el = this.$el;
                 var pullDownHeader = el.querySelector('.pull-down-header');
                 var icon = pullDownHeader.querySelector('.pull-down-content--icon');
-
+                /**
+                 * reset the status of pull down
+                 * @param {Object} pullDown the pull down
+                 */
+                let resetPullDown = (pullDown, withAnimation) => {
+                    if (withAnimation) {
+                        pullDownHeader.style.transition = ANIMATION;
+                    }
+                    pullDown.height = 0;
+                    pullDown.status = STATUS_START;
+                };
                 // store of touch position, include start position and distance
                 var touchPosition = {
                     start: 0,
@@ -122,7 +125,7 @@
 
                 // bind touchend event
                 el.addEventListener('touchend', e => {
-                    pullDownHeader.style.transition = 'height .2s ease';
+                    pullDownHeader.style.transition = ANIMATION;
                     // reset icon rotate
                     icon.style.transform = '';
                     // if distance is bigger than 60
@@ -135,13 +138,13 @@
                             // if onRefresh return promise
                             if (res && res.then && typeof res.then === 'function') {
                                 res.then(result => {
-                                    resetPullDown(this.pullDown);
+                                    resetPullDown(this.pullDown, true);
                                 }, error => {
                                     // show error and hide the pull down after 1 second
                                     this.pullDown.msg = error || this.customLabels[0];
                                     this.pullDown.status = STATUS_ERROR;
                                     setTimeout(() => {
-                                        resetPullDown(this.pullDown);
+                                        resetPullDown(this.pullDown, true);
                                     }, 1000);
                                 });
                             } else {
