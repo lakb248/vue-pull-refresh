@@ -39,7 +39,8 @@
                     status: 0,
                     height: 0,
                     msg: ''
-                }
+                },
+                canPull: false
             };
         },
         computed: {
@@ -92,6 +93,11 @@
 
                 // bind touchstart event to store start position of touch
                 el.addEventListener('touchstart', e => {
+                    if (el.scrollTop === 0) {
+                        this.canPull = true;
+                    } else {
+                        this.canPull = false;
+                    }
                     touchPosition.start = e.touches.item(0).pageY;
                 });
 
@@ -101,11 +107,16 @@
                  * finally, update the status of pull down based on the distance
                  */
                 el.addEventListener('touchmove', e => {
-                    var distance = e.touches.item(0).pageY - touchPosition.start - el.scrollTop;
+                    if (!this.canPull) {
+                        return;
+                    }
+                    
+                    var distance = e.touches.item(0).pageY - touchPosition.start;
                     // limit the height of pull down to 180
                     distance = distance > 180 ? 180 : distance;
-                    if (distance < 0) {
-                        return;
+                    // prevent native scroll
+                    if (distance > 0) {
+                        el.style.overflow = 'hidden';
                     }
                     // update touchPosition and the height of pull down
                     touchPosition.distance = distance;
@@ -129,11 +140,14 @@
 
                 // bind touchend event
                 el.addEventListener('touchend', e => {
+                    this.canPull = false;
+                    el.style.overflowY = 'auto';
                     pullDownHeader.style.transition = ANIMATION;
                     // reset icon rotate
                     icon.style.transform = '';
                     // if distance is bigger than 60
-                    if (touchPosition.distance > PULL_DOWN_HEIGHT) {
+                    if (touchPosition.distance - el.scrollTop > PULL_DOWN_HEIGHT) {
+                        el.scrollTop = 0;
                         this.pullDown.height = PULL_DOWN_HEIGHT;
                         this.pullDown.status = STATUS_REFRESH;
                         // trigger refresh callback
@@ -180,6 +194,7 @@
 <style lang="sass">
     .pull-down-container {
         height: 100%;
+        max-height: 100%;
         overflow-y: auto;
     }
     .pull-down-header {
