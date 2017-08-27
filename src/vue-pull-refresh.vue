@@ -75,6 +75,7 @@
                 /**
                  * reset the status of pull down
                  * @param {Object} pullDown the pull down
+                 * @param {Boolean} withAnimation whether add animation when pull up
                  */
                 let resetPullDown = (pullDown, withAnimation) => {
                     if (withAnimation) {
@@ -100,9 +101,12 @@
                  * finally, update the status of pull down based on the distance
                  */
                 el.addEventListener('touchmove', e => {
-                    var distance = e.touches.item(0).pageY - touchPosition.start;
+                    var distance = e.touches.item(0).pageY - touchPosition.start - el.scrollTop;
                     // limit the height of pull down to 180
                     distance = distance > 180 ? 180 : distance;
+                    if (distance < 0) {
+                        return;
+                    }
                     // update touchPosition and the height of pull down
                     touchPosition.distance = distance;
                     this.pullDown.height = distance;
@@ -174,6 +178,10 @@
 </script>
 
 <style lang="sass">
+    .pull-down-container {
+        height: 100%;
+        overflow-y: auto;
+    }
     .pull-down-header {
         width: 100%;
         height: 0px;
