@@ -159,6 +159,9 @@
                                     resetPullDown(this.pullDown, true);
                                 }, error => {
                                     // show error and hide the pull down after 1 second
+                                    if (typeof error !== 'string') {
+                                        error = false;
+                                    }
                                     this.pullDown.msg = error || this.customLabels[0];
                                     this.pullDown.status = STATUS_ERROR;
                                     setTimeout(() => {
