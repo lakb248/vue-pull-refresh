@@ -70,7 +70,7 @@ new Vue({
 | Property | Description |
 |:--|:--|
 | onRefresh | refresh event;Should return a promise. |
-| config | {<br>errorLabel: label shows when error<br>startLabel: label shows when pull down start<br>readyLabel: label shows when ready to refresh<br>loadingLabel: label shows when loading<br>} |
+| config | {<br>errorLabel: label shows when error<br>startLabel: label shows when pull down start<br>readyLabel: label shows when ready to refresh<br>loadingLabel: label shows when loading<br>pullDownHeight: the height toggle pull down refresh action<br>} |
 
 ## Contribution
 First, install dependencies

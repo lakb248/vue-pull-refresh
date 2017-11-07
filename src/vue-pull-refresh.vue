@@ -1,7 +1,7 @@
 <template>
     <div class="pull-down-container">
         <div class="pull-down-header" v-bind:style="{'height': pullDown.height + 'px'}">
-            <div class="pull-down-content">
+            <div class="pull-down-content" :style="pullDownContentStyle">
                 <i class="pull-down-content--icon" v-bind:class="iconClass"></i>
                 <span class="pull-down-content--label">{{label}}</span>
             </div>
@@ -18,7 +18,6 @@
     const STATUS_REFRESH = 2;
     // labels of pull down
     const LABELS = ['数据异常', '下拉刷新数据', '松开刷新数据', '数据刷新中...'];
-    const PULL_DOWN_HEIGHT = 60;
     const ANIMATION = 'height .2s ease';
 
     export default {
@@ -29,7 +28,9 @@
             config: {
                 type: Object,
                 default: function() {
-                    return {};
+                    return {
+                        pullDownHeight: 60
+                    };
                 }
             }
         },
@@ -66,6 +67,11 @@
                     return 'pull-down-error';
                 }
                 return '';
+            },
+            pullDownContentStyle() {
+                return {
+                    bottom: (this.config.pullDownHeight - 40) / 2 + 'px'
+                };
             }
         },
         mounted() {
@@ -125,7 +131,7 @@
                      * if distance is bigger than the height of pull down
                      * set the status of pull down to STATUS_READY
                      */
-                    if (distance > PULL_DOWN_HEIGHT) {
+                    if (distance > this.config.pullDownHeight) {
                         this.pullDown.status = STATUS_READY;
                         icon.style.transform = 'rotate(180deg)';
                     } else {
@@ -134,7 +140,7 @@
                          * and rotate the icon based on distance
                          */
                         this.pullDown.status = STATUS_START;
-                        icon.style.transform = 'rotate(' + distance / PULL_DOWN_HEIGHT * 180 + 'deg)';
+                        icon.style.transform = 'rotate(' + distance / this.config.pullDownHeight * 180 + 'deg)';
                     }
                 });
 
@@ -146,9 +152,9 @@
                     // reset icon rotate
                     icon.style.transform = '';
                     // if distance is bigger than 60
-                    if (touchPosition.distance - el.scrollTop > PULL_DOWN_HEIGHT) {
+                    if (touchPosition.distance - el.scrollTop > this.config.pullDownHeight) {
                         el.scrollTop = 0;
-                        this.pullDown.height = PULL_DOWN_HEIGHT;
+                        this.pullDown.height = this.config.pullDownHeight;
                         this.pullDown.status = STATUS_REFRESH;
                         // trigger refresh callback
                         if (this.onRefresh && typeof this.onRefresh === 'function') {
