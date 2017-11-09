@@ -96,6 +96,18 @@
                     start: 0,
                     distance: 0
                 };
+                
+                // @see https://www.chromestatus.com/feature/5745543795965952
+                // Test via a getter in the options object to see if the passive property is accessed
+                var supportsPassive = false;
+                try {
+                  var opts = Object.defineProperty({}, 'passive', {
+                    get: function() {
+                      supportsPassive = true;
+                    }
+                  });
+                  window.addEventListener("test", null, opts);
+                } catch (e) {}
 
                 // bind touchstart event to store start position of touch
                 el.addEventListener('touchstart', e => {
@@ -105,7 +117,7 @@
                         this.canPull = false;
                     }
                     touchPosition.start = e.touches.item(0).pageY;
-                });
+                }, supportsPassive ? { passive: true } : false);
 
                 /**
                  * bind touchmove event, do the following:
@@ -142,7 +154,7 @@
                         this.pullDown.status = STATUS_START;
                         icon.style.transform = 'rotate(' + distance / this.config.pullDownHeight * 180 + 'deg)';
                     }
-                });
+                }, supportsPassive ? { passive: true } : false);
 
                 // bind touchend event
                 el.addEventListener('touchend', e => {
