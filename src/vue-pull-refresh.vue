@@ -28,9 +28,7 @@
             config: {
                 type: Object,
                 default: function() {
-                    return {
-                        pullDownHeight: 60
-                    };
+                    return {};
                 }
             }
         },
@@ -53,10 +51,10 @@
                 return this.customLabels[this.pullDown.status + 1];
             },
             customLabels() {
-                let errorLabel = this.config.errorLabel || LABELS[0];
-                let startLabel = this.config.startLabel || LABELS[1];
-                let readyLaebl = this.config.readyLabel || LABELS[2];
-                let loadingLabel = this.config.loadingLabel || LABELS[3];
+                let errorLabel = this.config.errorLabel !== undefined ? this.config.errorLabel : LABELS[0];
+                let startLabel = this.config.startLabel !== undefined ? this.config.startLabel : LABELS[1];
+                let readyLaebl = this.config.readyLabel !== undefined ? this.config.readyLabel : LABELS[2];
+                let loadingLabel = this.config.loadingLabel !== undefined ? this.config.loadingLabel : LABELS[3];
                 return [errorLabel, startLabel, readyLaebl, loadingLabel];
             },
             iconClass() {
@@ -79,6 +77,8 @@
                 var el = this.$el;
                 var pullDownHeader = el.querySelector('.pull-down-header');
                 var icon = pullDownHeader.querySelector('.pull-down-content--icon');
+                // set default pullDownHeight
+                this.config.pullDownHeight = this.config.pullDownHeight || 60;
                 /**
                  * reset the status of pull down
                  * @param {Object} pullDown the pull down
@@ -96,17 +96,18 @@
                     start: 0,
                     distance: 0
                 };
-                
+
                 // @see https://www.chromestatus.com/feature/5745543795965952
                 // Test via a getter in the options object to see if the passive property is accessed
                 var supportsPassive = false;
                 try {
-                  var opts = Object.defineProperty({}, 'passive', {
-                    get: function() {
-                      supportsPassive = true;
-                    }
-                  });
-                  window.addEventListener("test", null, opts);
+                    var opts = Object.defineProperty({}, 'passive', {
+                        get: function() {
+                            supportsPassive = true;
+                        }
+                    });
+                    /* global window */
+                    window.addEventListener("test", null, opts);
                 } catch (e) {}
 
                 // bind touchstart event to store start position of touch
@@ -117,7 +118,7 @@
                         this.canPull = false;
                     }
                     touchPosition.start = e.touches.item(0).pageY;
-                }, supportsPassive ? { passive: true } : false);
+                }, supportsPassive ? {passive: true} : false);
 
                 /**
                  * bind touchmove event, do the following:
@@ -128,7 +129,7 @@
                     if (!this.canPull) {
                         return;
                     }
-                    
+
                     var distance = e.touches.item(0).pageY - touchPosition.start;
                     // limit the height of pull down to 180
                     distance = distance > 180 ? 180 : distance;
@@ -154,7 +155,7 @@
                         this.pullDown.status = STATUS_START;
                         icon.style.transform = 'rotate(' + distance / this.config.pullDownHeight * 180 + 'deg)';
                     }
-                }, supportsPassive ? { passive: true } : false);
+                }, supportsPassive ? {passive: true} : false);
 
                 // bind touchend event
                 el.addEventListener('touchend', e => {
