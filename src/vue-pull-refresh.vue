@@ -112,6 +112,7 @@
 
                 // bind touchstart event to store start position of touch
                 el.addEventListener('touchstart', e => {
+                    n.cancelPull = false;
                     if (el.scrollTop === 0) {
                         this.canPull = true;
                     } else {
@@ -126,6 +127,11 @@
                  * finally, update the status of pull down based on the distance
                  */
                 el.addEventListener('touchmove', e => {
+                    if (n.cancelPull) {
+                        n.pullDown.height = 0;
+                        return;
+                    }
+
                     if (!this.canPull) {
                         return;
                     }
