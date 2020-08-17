@@ -75,6 +75,7 @@
         mounted() {
             this.$nextTick(() => {
                 var el = this.$el;
+                var container = document.querySelector(this.config.containerSelector) || el; 
                 var pullDownHeader = el.querySelector('.pull-down-header');
                 var icon = pullDownHeader.querySelector('.pull-down-content--icon');
                 // set default pullDownHeight
@@ -112,7 +113,7 @@
 
                 // bind touchstart event to store start position of touch
                 el.addEventListener('touchstart', e => {
-                    if (el.scrollTop === 0) {
+                    if (container.scrollTop === 0) {
                         this.canPull = true;
                     } else {
                         this.canPull = false;
