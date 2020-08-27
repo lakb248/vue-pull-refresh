@@ -1,11 +1,13 @@
 <template>
     <div class="pull-down-container">
-        <div class="pull-down-header" v-bind:style="{'height': pullDown.height + 'px'}">
-            <div class="pull-down-content" :style="pullDownContentStyle">
-                <i class="pull-down-content--icon" v-bind:class="iconClass"></i>
-                <span class="pull-down-content--label">{{label}}</span>
+        <slot name="pull-down", :header-style="pullDownHeaderStyle", :content-style="pullDownContentStyle", :label="label">
+            <div class="pull-down-header" :style="pullDownHeaderStyle">
+                <div class="pull-down-content" :style="pullDownContentStyle">
+                    <i class="pull-down-content--icon" :class="iconClass"></i>
+                    <span class="pull-down-content--label">{{label}}</span>
+                </div>
             </div>
-        </div>
+        </slot>
         <slot></slot>
     </div>
 </template>
@@ -43,6 +45,13 @@
             };
         },
         computed: {
+            slotProps() {
+                return {
+                    label: this.label,
+                    headerStyle: this.pullDownHeaderStyle,
+                    contentStyle: this.pullDownContentStyle
+                };
+            },
             label() {
                 // label of pull down
                 if (this.pullDown.status === STATUS_ERROR) {
@@ -66,15 +75,23 @@
                 }
                 return '';
             },
-            pullDownContentStyle() {
+            pullDownHeaderStyle() {
                 return {
-                    bottom: (this.config.pullDownHeight - 40) / 2 + 'px'
+                    height: `${this.pullDown.height}px`
+                };
+            },
+            pullDownContentStyle() {
+                const height = (this.config.pullDownHeight - 40) / 2;
+
+                return {
+                    bottom: `${height}px`
                 };
             }
         },
         mounted() {
             this.$nextTick(() => {
                 var el = this.$el;
+                var container = document.querySelector(this.config.containerSelector) || el;
                 var pullDownHeader = el.querySelector('.pull-down-header');
                 var icon = pullDownHeader.querySelector('.pull-down-content--icon');
                 // set default pullDownHeight
@@ -112,7 +129,7 @@
 
                 // bind touchstart event to store start position of touch
                 el.addEventListener('touchstart', e => {
-                    if (el.scrollTop === 0) {
+                    if (container.scrollTop === 0) {
                         this.canPull = true;
                     } else {
                         this.canPull = false;
